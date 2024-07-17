@@ -36,7 +36,7 @@
                 <a href="{{ route('vehicles.index') }}" class="nav-link-item">Dashboard</a>
                 <a href="{{ route('admin.bookings.index') }}" class="nav-link-item">Lihat Permintaan</a>
               @elseif (auth()->user()->hasRole('approver'))
-                <a href="{{ route('admin.bookings.index') }}" class="nav-link-item">Permintaan</a>
+                <a href="{{ route('approvals.index') }}" class="nav-link-item">Permintaan</a>
               @else
                 <a href="#!" class="nav-link-item">Katalog</a>
                 <a href="{{route('my-bookings')}}" class="nav-link-item">Booking</a>

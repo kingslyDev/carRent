@@ -46,6 +46,7 @@ Route::middleware('auth')->group(function () {
     // Rute khusus untuk admin
     Route::middleware('role:admin')->group(function () {
         Route::get('/admin/bookings', [AdminBookingController::class, 'index'])->name('admin.bookings.index');
+        Route::get('/export-bookings', [BookingController::class, 'exportBookings'])->name('export.bookings');
         Route::post('/admin/bookings/{id}/execute', [AdminBookingController::class, 'execute'])->name('admin.bookings.execute');
         Route::resource('drivers', DriverController::class)->except(['show']); // CRUD untuk drivers
         Route::put('/drivers/{driver}', [DriverController::class, 'update'])->name('drivers.baru'); // Update driver
@@ -55,8 +56,11 @@ Route::middleware('auth')->group(function () {
 
     // Rute untuk approver
     Route::middleware('role:approver')->group(function () {
-        Route::resource('approvals', ApprovalController::class)->only(['index', 'update']); // CRUD untuk approvals
+        Route::get('/approvals', [ApprovalController::class, 'index'])->name('approvals.index');
+        Route::post('/approvals/{id}/approve', [ApprovalController::class, 'approve'])->name('approvals.approve');
+        Route::get('/approvals/export', [ApprovalController::class, 'export'])->name('approvals.export');
     });
+    
 
 });
 
