@@ -12,19 +12,27 @@ return new class extends Migration
     public function up()
     {
         Schema::table('bookings', function (Blueprint $table) {
-        $table->foreignId('driver_id')->constrained('drivers');
-        $table->foreignId('approver_id')->constrained('users');
-        
+            // Menambahkan kolom driver_id dengan foreign key ke tabel drivers, nullable
+            $table->foreignId('driver_id')->nullable()->constrained('drivers');
+
+            // Menambahkan kolom approver_id dengan foreign key ke tabel users, nullable
+            $table->foreignId('approver_id')->nullable()->constrained('users');
         });
     }
 
     /**
      * Reverse the migrations.
      */
-    public function down(): void
+    public function down()
     {
         Schema::table('bookings', function (Blueprint $table) {
-            //
+            // Menghapus foreign key constraint dan kolom driver_id
+            $table->dropForeign(['driver_id']);
+            $table->dropColumn('driver_id');
+
+            // Menghapus foreign key constraint dan kolom approver_id
+            $table->dropForeign(['approver_id']);
+            $table->dropColumn('approver_id');
         });
     }
 };

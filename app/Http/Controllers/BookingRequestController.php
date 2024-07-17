@@ -46,6 +46,7 @@ class BookingRequestController extends Controller
     {
         // Validasi data input dari form request booking
         $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
             'vehicle_id' => 'required|exists:vehicles,id',
             'start_time' => 'required|date|after:now',
             'end_time' => 'required|date|after:start_time',
@@ -53,16 +54,20 @@ class BookingRequestController extends Controller
     
         // Simpan data booking ke database dengan status 'pending'
         Booking::create([
-            'user_id' => auth()->id(),
+            'user_id' => $validated['user_id'], // Mengambil user_id dari input yang divalidasi
             'vehicle_id' => $validated['vehicle_id'],
             'start_time' => $validated['start_time'],
             'end_time' => $validated['end_time'],
             'status' => 'pending',
+            
         ]);
+
+
     
-        // Redirect ke halaman yang sesuai dengan pesan sukses
-        return redirect()->route('booking-requests.index')->with('success', 'Booking request created successfully.');
+        return redirect()->route('my-bookings')->with('success', 'Booking request created successfully.');
     }
+    
+    
     
 
     /**
@@ -89,24 +94,6 @@ class BookingRequestController extends Controller
     public function update(Request $request, $id)
     {
         // Validasi data input dari form request booking
-        $validated = $request->validate([
-            'start_time' => 'required|date|after:now',
-            'end_time' => 'required|date|after:start_time',
-            'purpose' => 'required|string|max:255',
-        ]);
-
-        // Ambil data booking yang akan diupdate
-        $booking = Booking::findOrFail($id);
-
-        // Update data booking
-        $booking->update([
-            'start_time' => $validated['start_time'],
-            'end_time' => $validated['end_time'],
-            'purpose' => $validated['purpose'],
-        ]);
-
-        // Redirect ke halaman yang sesuai dengan pesan sukses
-        return redirect()->route('booking-requests.index')->with('success', 'Booking request updated successfully.');
     }
 
     /**

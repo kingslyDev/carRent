@@ -10,11 +10,22 @@ use Illuminate\Http\Request;
 
 class BookingController extends Controller
 {
+    
     public function index()
     {
         $bookings = Booking::with(['user', 'vehicle', 'driver', 'approver'])->get();
         return view('bookings.index', compact('bookings'));
     }
+
+
+    public function myBookings()
+    {
+        $user_id = auth()->id(); 
+        $bookings = Booking::where('user_id', $user_id)->get();
+
+        return view('employee.bookings.my-bookings', compact('bookings'));
+    }
+
 
     public function create()
     {
@@ -70,10 +81,11 @@ class BookingController extends Controller
         return redirect()->route('bookings.index')->with('success', 'Booking updated successfully.');
     }
 
-    public function destroy(Booking $booking)
+    public function destroy(int $id)
     {
+        $booking = Booking::findOrFail($id);
         $booking->delete();
-        return redirect()->route('bookings.index')->with('success', 'Booking deleted successfully.');
+        return redirect()->back()->with('success', 'Booking deleted successfully');
     }
 }
 

@@ -21,10 +21,14 @@ Route::middleware('auth')->group(function () {
         Route::resource('vehicles', VehicleController::class); // CRUD untuk vehicles
         Route::put('/vehicles/{vehicle}', [VehicleController::class, 'update'])->name('vehicles.baru'); // Update vehicle
         Route::get('/bookings/{vehicle}', [BookingController::class, 'index'])->name('bookings.vehicles.index');
+        Route::delete('/my-bookings/{id}', [BookingRequestController::class, 'destroy'])->name('my-bookings.destroy');
     });
 
     Route::middleware('role:karyawan')->group(function () {
         Route::resource('booking-requests', BookingRequestController::class);
+        Route::get('/my-bookings', [BookingController::class, 'myBookings'])->name('my-bookings');
+        
+        
 });
 
 

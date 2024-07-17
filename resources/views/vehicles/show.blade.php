@@ -78,7 +78,7 @@
                                 <div class="w-full max-w-[70%]">
                                     <!-- Button Primary -->
                                     <div class="p-1 rounded-full bg-primary group">
-                                    <a href="{{ route('booking_requests.index', ['vehicle' => $vehicle->id]) }}" class="btn btn-primary">
+                                    <a href="{{ route('booking-requests.index', ['vehicle' => $vehicle->id]) }}" class="btn btn-primary">
                                     <p>Pinjam Sekarang</p>
                                     <img src="{{ asset('assets/svgs/ic-arrow-right.svg') }}" alt="Arrow Right Icon">
                                     </a>

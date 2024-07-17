@@ -11,7 +11,7 @@ class BookingRequest extends Model
 
     protected $fillable = [
         'user_id',
-        'vehicle_id',
+        'vehicles_id',
         'booking_date',
         'status',
         // tambahkan atribut lain yang diperlukan
