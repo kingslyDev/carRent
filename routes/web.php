@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminBookingController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\ApprovalController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\BookingRequestController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DriverController;
@@ -12,6 +13,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+Route::get('admin/register', [RegisteredUserController::class, 'create'])->name('admin.register');
+Route::post('admin/register', [RegisteredUserController::class, 'store'])->name('admin.register.submit');
+Route::get('approver/register', [RegisteredUserController::class, 'create'])->name('approver.register');
+Route::post('approver/register', [RegisteredUserController::class, 'store'])->name('approver.register.submit');
+
 
 // Rute untuk semua pengguna yang terautentikasi
 Route::middleware('auth')->group(function () {
@@ -38,7 +45,8 @@ Route::middleware('auth')->group(function () {
 
     // Rute khusus untuk admin
     Route::middleware('role:admin')->group(function () {
-        Route::get('/admin/bookings', [AdminBookingController::class, 'index'])->name('admin.bookings.index'); // Index bookings untuk admin
+        Route::get('/admin/bookings', [AdminBookingController::class, 'index'])->name('admin.bookings.index');
+        Route::post('/admin/bookings/{id}/execute', [AdminBookingController::class, 'execute'])->name('admin.bookings.execute');
         Route::resource('drivers', DriverController::class)->except(['show']); // CRUD untuk drivers
         Route::put('/drivers/{driver}', [DriverController::class, 'update'])->name('drivers.baru'); // Update driver
         Route::resource('bookings', BookingController::class)->except(['show']); // CRUD untuk bookings
