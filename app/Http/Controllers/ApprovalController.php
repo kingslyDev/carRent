@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Approval;
 use App\Models\Booking;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -33,34 +34,51 @@ class ApprovalController extends Controller
 
 public function approve(Request $request, $id)
 {
-    // Validasi request
-    $request->validate([
-        'status' => 'required|in:approved,rejected',
-    ]);
+    try {
+        // Validasi request
+        $request->validate([
+            'status' => 'required|in:approved,rejected',
+        ]);
 
-    // Cari booking berdasarkan ID dan pastikan hanya booking dengan status 'pending'
-    $booking = Booking::where('id', $id)
-                      ->where('status', 'pending')
-                      ->where('approver_id', auth()->user()->id) // Hanya booking yang diizinkan oleh approver yang sedang login
-                      ->firstOrFail();
-    
-    // Simpan status booking sesuai dengan request
-    $booking->status = $request->input('status');
+        // Cari booking berdasarkan ID dan pastikan hanya booking dengan status 'pending'
+        $booking = Booking::where('id', $id)
+                          ->where('status', 'pending')
+                          ->where('approver_id', auth()->user()->id) // Hanya booking yang diizinkan oleh approver yang sedang login
+                          ->firstOrFail();
+        
+        // Log bahwa booking yang akan diapprove/reject telah ditemukan
+        Log::info('Approving/rejecting booking ID ' . $booking->id . ' by user ID ' . auth()->user()->id);
 
-    // Jika status adalah 'approved', kurangi stok kendaraan
-    if ($request->input('status') === 'approved') {
-    
-        $vehicle = $booking->vehicle;
-        $vehicle->stock -= 1; 
-        $vehicle->save();
+        // Simpan status booking sesuai dengan request
+        $booking->status = $request->input('status');
+
+        // Jika status adalah 'approved', kurangi stok kendaraan
+        if ($request->input('status') === 'approved') {
+            $vehicle = $booking->vehicle;
+            $vehicle->stock -= 1;
+            $vehicle->save();
+
+            // Log bahwa stok kendaraan telah dikurangi
+            Log::info('Vehicle stock decreased for vehicle ID ' . $vehicle->id);
+        }
+
+        // Simpan perubahan booking
+        $booking->save();
+
+        // Log bahwa booking berhasil disimpan dengan status baru
+        Log::info('Booking ID ' . $booking->id . ' status updated to ' . $booking->status);
+
+        // Redirect kembali ke halaman index dengan pesan sukses
+        return redirect()->route('approvals.index')->with('success', 'Booking telah disetujui atau ditolak.');
+    } catch (\Exception $e) {
+        // Log jika terjadi exception saat proses approve/reject booking
+        Log::error('Error approving/rejecting booking: ' . $e->getMessage());
+
+        // Redirect kembali dengan pesan error
+        return redirect()->back()->with('error', 'Gagal menyetujui atau menolak booking.');
     }
-
-    // Simpan perubahan booking
-    $booking->save();
-
-    // Redirect kembali ke halaman index dengan pesan sukses
-    return redirect()->route('approvals.index')->with('success', 'Booking telah disetujui atau ditolak.');
 }
+
 
 
 public function export(Request $request)

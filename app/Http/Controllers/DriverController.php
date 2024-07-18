@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Driver;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class DriverController extends Controller
 {
@@ -95,11 +96,28 @@ class DriverController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
-    {
-        //
-        $drivers = Driver::findOrFail($id);
-        $drivers->delete();
-        return redirect()->back()->with('success', 'Driver deleted successfully');
-   
-    }
+{
+    // Cari driver berdasarkan ID atau tampilkan error jika tidak ditemukan
+    $driver = Driver::findOrFail($id);
+
+    // Simpan informasi driver yang akan dihapus untuk logging
+    $driverInfo = [
+        'id' => $driver->id,
+        'name' => $driver->name,
+        'city' => $driver->city,
+        'status' => $driver->status,
+    ];
+
+    // Hapus driver dari database
+    $driver->delete();
+
+    // Logging informasi penghapusan driver
+    Log::info('Driver deleted.', [
+        'driver_info' => $driverInfo,
+    ]);
+
+    // Redirect kembali ke halaman sebelumnya dengan pesan sukses
+    return redirect()->back()->with('success', 'Driver deleted successfully');
+}
+
 }

@@ -1,9 +1,29 @@
 @extends('layouts.app')
 
 @section('content')
+
 <div class="container">
     <h1>Daftar Booking</h1>
-    
+
+    <!-- Form untuk memilih rentang tanggal -->
+    <form action="{{ route('export.bookings') }}" method="GET" class="mb-3">
+        <div class="row">
+            <div class="col-md-4">
+                <label for="start_date">Start Date:</label>
+                <input type="date" class="form-control" id="start_date" name="start_date" required>
+            </div>
+            <div class="col-md-4">
+                <label for="end_date">End Date:</label>
+                <input type="date" class="form-control" id="end_date" name="end_date" required>
+            </div>
+            <div class="col-md-4">
+                <label class="invisible">Submit</label><br>
+                <button type="submit" class="btn btn-primary mt-2">Export</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Tabel daftar booking -->
     <table class="table">
         <thead>
             <tr>
@@ -32,7 +52,9 @@
                                 <select name="driver_id" required>
                                     <option value="">Pilih Driver</option>
                                     @foreach ($availableDrivers as $driver)
-                                        <option value="{{ $driver->id }}">{{ $driver->name }}</option>
+                                        @if ($driver->status == 'siap')
+                                            <option value="{{ $driver->id }}">{{ $driver->name }}</option>
+                                        @endif
                                     @endforeach
                                 </select>
                         @else

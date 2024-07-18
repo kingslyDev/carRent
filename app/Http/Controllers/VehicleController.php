@@ -139,11 +139,10 @@ class VehicleController extends Controller
         if ($vehicle->thumbnail) {
         Storage::disk('public')->delete($vehicle->thumbnail);
         }
-
-        // Delete the vehicle
+        
         $vehicle->delete();
 
-        // Redirect back to vehicles index with success message
+        
         return redirect()->route('vehicles.index')->with('success', 'Vehicle deleted successfully.');
     }
 }

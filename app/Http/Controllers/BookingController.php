@@ -7,6 +7,8 @@ use App\Models\Driver;
 use App\Models\User;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class BookingController extends Controller
 {
@@ -87,6 +89,78 @@ class BookingController extends Controller
         $booking->delete();
         return redirect()->back()->with('success', 'Booking deleted successfully');
     }
+
+
+    
+
+    public function exportBookings(Request $request)
+    {
+        
+        $request->validate([
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
+
+        $startDate = $request->input('start_date');
+        $endDate = $request->input('end_date');
+
+        $bookings = Booking::whereBetween('start_time', [$startDate, $endDate])->get();
+
+      
+        $spreadsheet = new Spreadsheet();
+
+      
+        $spreadsheet->getProperties()
+                    ->setCreator('Your Name')
+                    ->setTitle('Daftar Booking')
+                    ->setDescription('Daftar booking berdasarkan tanggal start time');
+
+       
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setCellValue('A1', 'Peminjam');
+        $sheet->setCellValue('B1', 'Kendaraan');
+        $sheet->setCellValue('C1', 'Start Time');
+        $sheet->setCellValue('D1', 'End Time');
+        $sheet->setCellValue('E1', 'Status');
+        $sheet->setCellValue('F1', 'Driver');
+        $sheet->setCellValue('G1', 'Approval');
+
+        // Fill data rows
+        $row = 2; // Starting row for data
+        foreach ($bookings as $booking) {
+            $sheet->setCellValue('A' . $row, $booking->user->name);
+            $sheet->setCellValue('B' . $row, $booking->vehicle->name);
+            $sheet->setCellValue('C' . $row, \Carbon\Carbon::parse($booking->start_time)->format('d F Y'));
+            $sheet->setCellValue('D' . $row, \Carbon\Carbon::parse($booking->end_time)->format('d F Y'));
+            $sheet->setCellValue('E' . $row, $booking->status);
+            $sheet->setCellValue('F' . $row, $booking->driver_id ? $booking->driver->name : '');
+            $sheet->setCellValue('G' . $row, $booking->approver_id ? $booking->approver->name : '');
+            $row++;
+        }
+
+        // Set auto size for columns
+        foreach (range('A', 'G') as $column) {
+            $sheet->getColumnDimension($column)->setAutoSize(true);
+        }
+
+        // Create Excel file
+        $filename = 'bookings_' . date('YmdHis') . '.xlsx';
+
+        // Set headers for download
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        // Create Excel writer
+        $writer = new Xlsx($spreadsheet);
+
+        // Save Excel file to output
+        $writer->save('php://output');
+
+        exit;
+    }
+
+
 }
 
 

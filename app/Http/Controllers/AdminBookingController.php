@@ -7,6 +7,7 @@ use App\Models\Driver;
 use App\Models\User;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class AdminBookingController extends Controller
 {
@@ -16,7 +17,6 @@ class AdminBookingController extends Controller
         $drivers = Driver::all();
         $approvers = User::role('approver')->get();
 
-        // Filter drivers who are already assigned to a booking
         $assignedDrivers = Booking::whereNotNull('driver_id')->pluck('driver_id')->toArray();
         $availableDrivers = $drivers->whereNotIn('id', $assignedDrivers);
 
@@ -25,13 +25,35 @@ class AdminBookingController extends Controller
 
     public function execute(Request $request, $id)
     {
-        $booking = Booking::findOrFail($id);
-        $booking->driver_id = $request->input('driver_id');
-        $booking->approver_id = $request->input('approver_id');
-        $booking->status = 'pending'; 
-        $booking->save();
+        try {
+            $request->validate([
+                'driver_id' => 'required|exists:drivers,id',
+                'approver_id' => 'required|exists:users,id',
+            ]);
 
-        // Redirect ke halaman atau route yang sesuai
-        return redirect()->route('admin.bookings.index')->with('success', 'Driver telah ditetapkan untuk booking.');
+            $booking = Booking::findOrFail($id);
+
+            $driverId = $request->input('driver_id');
+            $approverId = $request->input('approver_id');
+
+            $driver = Driver::findOrFail($driverId);
+
+            $driver->status = 'tidak';
+            $driver->save();
+
+            $booking->driver_id = $driverId;
+            $booking->approver_id = $approverId;
+            $booking->status = 'pending';
+
+            $booking->save();
+
+            $logMessage = "Booking ID: {$booking->id} updated - Driver ID: {$driverId}, Approver ID: {$approverId}, Status: pending";
+            Log::info($logMessage);
+
+            return redirect()->route('admin.bookings.index')->with('success', 'Driver dan approver telah ditetapkan untuk booking.');
+        } catch (\Exception $e) {
+            Log::error("Error updating booking with ID {$id}: " . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat menetapkan driver atau approver untuk booking.');
+        }
     }
 }

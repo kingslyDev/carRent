@@ -34,7 +34,9 @@
             @auth
               @if (auth()->user()->hasRole('admin'))
                 <a href="{{ route('vehicles.index') }}" class="nav-link-item">Dashboard</a>
+                <a href="{{route('drivers.index')}}" class="nav-link-item">Drivers</a>
                 <a href="{{ route('admin.bookings.index') }}" class="nav-link-item">Lihat Permintaan</a>
+                <a href="{{ route('reports.index') }}" class="nav-link-item">Report Kendaraan</a>
               @elseif (auth()->user()->hasRole('approver'))
                 <a href="{{ route('approvals.index') }}" class="nav-link-item">Permintaan</a>
               @else
@@ -42,7 +44,7 @@
                 <a href="{{route('my-bookings')}}" class="nav-link-item">Booking</a>
               @endif
             @else
-              <a href="#!" class="nav-link-item">Maps</a>
+              <a href="/maps" class="nav-link-item">Maps</a>
             @endauth
           </div>
           <div class="flex flex-col w-full ml-auto lg:w-auto lg:gap-12 lg:items-center lg:flex-row">

@@ -57,7 +57,7 @@
           <!-- Button Primary -->
           <div class="p-1 rounded-full bg-primary group" data-aos="zoom-in" data-aos-delay="3400">
             <a href="checkout.html" class="btn-primary">
-              <p>Rent Now</p>
+              <p>Booking Now</p>
               <img src="../assets/svgs/ic-arrow-right.svg" alt="" />
             </a>
           </div>

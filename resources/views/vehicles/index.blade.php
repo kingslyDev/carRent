@@ -3,7 +3,7 @@
 @section('content')
 <div class="container">
     <div class="mb-5 justify-items-center">
-    <a href="{{route('drivers.index')}}" class="mb-5 font-bold text-xl">List Driver disini</a>
+    <a href="#" class="mb-5 font-bold text-xl">Manage Mobil</a>
 </div> 
     <h1 class="mb-5 font-bold">Vehicles</h1>
     <a href="{{ route('vehicles.create') }}" class="btn btn-primary mb-3">Add Vehicle</a>
