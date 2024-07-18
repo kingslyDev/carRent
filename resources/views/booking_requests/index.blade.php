@@ -18,7 +18,7 @@
     <div class="container">
         <header class="mb-[30px]">
             <h2 class="font-bold text-dark text-[26px] mb-1">
-                Checkout & Drive Faster
+                Booking Wajib H-1 / tidak bisa hari ini!
             </h2>
             <p class="text-base text-secondary">We will help you get ready today</p>
         </header>

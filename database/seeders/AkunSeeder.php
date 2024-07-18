@@ -17,8 +17,8 @@ class AkunSeeder extends Seeder
         // Buat User Admin
         $admin = User::create([
             'name' => 'Admin',
-            'email' => 'admin@example.com',
-            'password' => bcrypt('password') // Ganti 'password' dengan password yang diinginkan
+            'email' => 'admin@sekawan.com',
+            'password' => bcrypt('sekawan') // Ganti 'password' dengan password yang diinginkan
         ]);
 
         // Assign Role Admin
@@ -30,8 +30,8 @@ class AkunSeeder extends Seeder
         // Buat User Approver
         $approver = User::create([
             'name' => 'Approver',
-            'email' => 'approver@example.com',
-            'password' => bcrypt('password') // Ganti 'password' dengan password yang diinginkan
+            'email' => 'approver@sekawan.com',
+            'password' => bcrypt('sekawan') // Ganti 'password' dengan password yang diinginkan
         ]);
 
         // Assign Role Approver
@@ -43,8 +43,8 @@ class AkunSeeder extends Seeder
         // Buat User Karyawan
         $karyawan = User::create([
             'name' => 'Karyawan',
-            'email' => 'karyawan@example.com',
-            'password' => bcrypt('password') // Ganti 'password' dengan password yang diinginkan
+            'email' => 'karyawan@sekawan.com',
+            'password' => bcrypt('sekawan') // Ganti 'password' dengan password yang diinginkan
         ]);
 
         // Assign Role Karyawan
